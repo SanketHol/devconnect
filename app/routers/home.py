@@ -165,3 +165,37 @@ def get_post(
         )
 
     return post
+
+
+@router.delete("/posts/{post_id}")
+def delete_post(
+    post_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    post = (
+        db.query(Post)
+        .filter(Post.id == post_id)
+        .first()
+    )
+
+    if post is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Post not found"
+        )
+
+    if post.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not allowed to delete this post"
+        )
+
+    db.delete(post)
+
+    db.commit()
+
+    return {
+        "message": "Post deleted successfully"
+    }
