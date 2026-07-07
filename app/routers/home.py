@@ -12,6 +12,9 @@ from app.utils.jwt import create_access_token
 from app.utils.auth import get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
 
+from app.schemas.post import PostCreate
+from app.models.post import Post
+
 router = APIRouter()
 
 
@@ -91,4 +94,29 @@ def get_me(
         "id": current_user.id,
         "full_name": current_user.full_name,
         "email": current_user.email
+    }
+
+
+@router.post("/posts")
+def create_post(
+    post: PostCreate,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    new_post = Post(
+        caption=post.caption,
+        image_url=post.image_url,
+        user_id=current_user.id
+    )
+
+    db.add(new_post)
+
+    db.commit()
+
+    db.refresh(new_post)
+
+    return {
+        "message": "Post created successfully",
+        "post_id": new_post.id
     }
