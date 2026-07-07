@@ -14,6 +14,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.post import PostCreate
 from app.models.post import Post
+from typing import List
+from app.schemas.post import PostResponse
 
 router = APIRouter()
 
@@ -120,3 +122,16 @@ def create_post(
         "message": "Post created successfully",
         "post_id": new_post.id
     }
+
+
+@router.get(
+    "/posts",
+    response_model=List[PostResponse]
+)
+def get_posts(
+    db: Session = Depends(get_db)
+):
+
+    posts = db.query(Post).all()
+
+    return posts
