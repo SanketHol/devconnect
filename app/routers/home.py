@@ -199,3 +199,41 @@ def delete_post(
     return {
         "message": "Post deleted successfully"
     }
+
+
+@router.put(
+    "/posts/{post_id}",
+    response_model=PostResponse
+)
+def update_post(
+    post_id: int,
+    updated_post: PostCreate,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    post = (
+        db.query(Post)
+        .filter(Post.id == post_id)
+        .first()
+    )
+
+    if post is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Post not found"
+        )
+
+    if post.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not allowed to update this post"
+        )
+
+    post.caption = updated_post.caption
+    post.image_url = updated_post.image_url
+
+    db.commit()
+    db.refresh(post)
+
+    return post
