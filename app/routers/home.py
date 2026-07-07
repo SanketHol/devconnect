@@ -132,6 +132,11 @@ def get_posts(
     db: Session = Depends(get_db)
 ):
 
-    posts = db.query(Post).all()
+    posts = (
+        db.query(Post)
+        .order_by(Post.created_at.desc())
+        .limit(10)
+        .all()
+    )
 
     return posts

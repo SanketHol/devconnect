@@ -8,3 +8,10 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=32)
+
+class UserResponse(BaseModel):
+    id: int
+    full_name: str
+
+    class Config:
+        from_attributes = True
