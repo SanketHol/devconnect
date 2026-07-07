@@ -140,3 +140,28 @@ def get_posts(
     )
 
     return posts
+
+from fastapi import HTTPException
+
+@router.get(
+    "/posts/{post_id}",
+    response_model=PostResponse
+)
+def get_post(
+    post_id: int,
+    db: Session = Depends(get_db)
+):
+
+    post = (
+        db.query(Post)
+        .filter(Post.id == post_id)
+        .first()
+    )
+
+    if post is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Post not found"
+        )
+
+    return post
