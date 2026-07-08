@@ -7,6 +7,10 @@ from app.database import get_db
 from app.models.post import Post
 from app.schemas.post import PostCreate, PostResponse
 from app.utils.auth import get_current_user
+from sqlalchemy.orm import joinedload
+from app.repositories import post_repository
+from fastapi import Query
+
 
 router = APIRouter(
     prefix="/posts",
@@ -45,15 +49,12 @@ def create_post(
     response_model=List[PostResponse]
 )
 def get_posts(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
 
-    posts = (
-        db.query(Post)
-        .order_by(Post.created_at.desc())
-        .limit(10)
-        .all()
-    )
+    posts = post_repository.get_posts(db, skip, limit)
 
     return posts
 
@@ -68,11 +69,7 @@ def get_post(
     db: Session = Depends(get_db)
 ):
 
-    post = (
-        db.query(Post)
-        .filter(Post.id == post_id)
-        .first()
-    )
+    post = post_repository.get_post(db, post_id)
 
     if post is None:
         raise HTTPException(
