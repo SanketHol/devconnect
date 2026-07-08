@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
-
+from app.models.comment import Comment
 from app.models.post import Post
 
 def get_posts(
@@ -9,7 +9,14 @@ def get_posts(
 ):
     return (
         db.query(Post)
-        .options(joinedload(Post.user))
+        .options(
+
+            joinedload(Post.user),
+
+            joinedload(Post.comments)
+                .joinedload(Comment.user)
+
+        )
         .order_by(Post.created_at.desc())
         .offset(skip)
         .limit(limit)
@@ -23,7 +30,14 @@ def get_post(
 
     return (
         db.query(Post)
-        .options(joinedload(Post.user))
+        .options(
+
+            joinedload(Post.user),
+
+            joinedload(Post.comments)
+                .joinedload(Comment.user)
+
+        )
         .filter(Post.id == post_id)
         .first()
     )

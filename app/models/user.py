@@ -16,3 +16,5 @@ class User(Base):
     password = Column(String, nullable=False)
 
     posts = relationship("Post", back_populates="user", cascade="all, delete")
+
+    comments = relationship("Comment", back_populates="user")
