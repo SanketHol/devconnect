@@ -8,6 +8,9 @@ from app.schemas.user import UserRegister
 from app.utils.security import hash_password, verify_password
 from app.utils.jwt import create_access_token
 from app.utils.auth import get_current_user
+from app.schemas.profile import ProfileResponse
+from app.models.post import Post
+from fastapi import HTTPException
 
 router = APIRouter(
     prefix="/users",
@@ -83,4 +86,41 @@ def get_me(
         "id": current_user.id,
         "full_name": current_user.full_name,
         "email": current_user.email
+    }
+
+
+@router.get(
+    "/{user_id}",
+    response_model=ProfileResponse
+)
+def get_profile(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+
+    user = (
+        db.query(User)
+        .filter(User.id == user_id)
+        .first()
+    )
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    posts_count = (
+        db.query(Post)
+        .filter(Post.user_id == user.id)
+        .count()
+    )
+
+    return {
+        "id": user.id,
+        "full_name": user.full_name,
+        "email": user.email,
+        "bio": user.bio,
+        "profile_picture": user.profile_picture,
+        "posts_count": posts_count
     }

@@ -18,3 +18,9 @@ class User(Base):
     posts = relationship("Post", back_populates="user", cascade="all, delete")
 
     comments = relationship("Comment", back_populates="user")
+
+    likes = relationship("Like", back_populates="user", cascade="all, delete")
+
+    bio = Column(String, nullable=True)
+
+    profile_picture = Column(String, nullable=True)
