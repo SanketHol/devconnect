@@ -24,3 +24,9 @@ class User(Base):
     bio = Column(String, nullable=True)
 
     profile_picture = Column(String, nullable=True)
+
+    following = relationship("Follow", foreign_keys="Follow.follower_id",  back_populates="follower", cascade="all, delete-orphan")
+
+    followers = relationship("Follow", foreign_keys="Follow.following_id", back_populates="following", cascade="all, delete-orphan")
+
+    

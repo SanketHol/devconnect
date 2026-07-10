@@ -8,7 +8,10 @@ from app.schemas.user import UserRegister
 from app.utils.security import hash_password, verify_password
 from app.utils.jwt import create_access_token
 from app.utils.auth import get_current_user
-from app.schemas.profile import ProfileResponse
+from app.schemas.profile import (
+    ProfileResponse,
+    ProfileUpdate
+)
 from app.models.post import Post
 from fastapi import HTTPException
 
@@ -123,4 +126,24 @@ def get_profile(
         "bio": user.bio,
         "profile_picture": user.profile_picture,
         "posts_count": posts_count
+    }
+
+
+@router.put("/me")
+def update_profile(
+    profile: ProfileUpdate,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    update_data = profile.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
+
+    db.commit()
+    db.refresh(current_user)
+
+    return {
+        "message": "Profile updated successfully"
     }
