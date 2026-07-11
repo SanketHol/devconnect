@@ -14,6 +14,8 @@ from app.schemas.profile import (
 )
 from app.models.post import Post
 from fastapi import HTTPException
+from app.repositories import user_repository
+from typing import List
 
 router = APIRouter(
     prefix="/users",
@@ -90,6 +92,18 @@ def get_me(
         "full_name": current_user.full_name,
         "email": current_user.email
     }
+
+
+@router.get("/search")
+def search_users(
+    query: str,
+    db: Session = Depends(get_db)
+):
+
+    return user_repository.search_users(
+        db,
+        query
+    )
 
 
 @router.get(
