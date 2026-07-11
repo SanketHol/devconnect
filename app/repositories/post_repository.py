@@ -65,3 +65,17 @@ def get_feed_posts(
         .limit(limit)
         .all()
     )
+
+
+def search_posts(
+    db: Session,
+    query: str
+):
+    return (
+        db.query(Post)
+        .filter(
+            Post.caption.ilike(f"%{query}%")
+        )
+        .order_by(Post.created_at.desc())
+        .all()
+    )

@@ -10,7 +10,7 @@ from app.utils.auth import get_current_user
 from sqlalchemy.orm import joinedload
 from app.repositories import post_repository
 from fastapi import Query
-
+from app.schemas.post_search import PostSearchResponse
 
 router = APIRouter(
     prefix="/posts",
@@ -76,6 +76,22 @@ def get_feed(
         skip,
         limit
     )
+
+
+@router.get(
+    "/search",
+    response_model=list[PostSearchResponse]
+)
+def search_posts(
+    query: str,
+    db: Session = Depends(get_db)
+):
+
+    return post_repository.search_posts(
+        db,
+        query
+    )
+
 
 
 from fastapi import HTTPException
