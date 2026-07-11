@@ -41,3 +41,27 @@ def get_post(
         .filter(Post.id == post_id)
         .first()
     )
+
+from app.models.follow import Follow
+
+
+def get_feed_posts(
+    db: Session,
+    current_user_id: int,
+    skip: int = 0,
+    limit: int = 10
+):
+    return (
+        db.query(Post)
+        .join(
+            Follow,
+            Post.user_id == Follow.following_id
+        )
+        .filter(
+            Follow.follower_id == current_user_id
+        )
+        .order_by(Post.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )

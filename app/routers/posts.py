@@ -58,6 +58,26 @@ def get_posts(
 
     return posts
 
+
+@router.get(
+    "/feed",
+    response_model=List[PostResponse]
+)
+def get_feed(
+    skip: int = 0,
+    limit: int = 10,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    return post_repository.get_feed_posts(
+        db,
+        current_user.id,
+        skip,
+        limit
+    )
+
+
 from fastapi import HTTPException
 
 @router.get(
