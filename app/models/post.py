@@ -24,3 +24,9 @@ class Post(Base):
 
     likes = relationship("Like", back_populates="post", cascade="all, delete")
 
+    notifications = relationship(
+    "Notification",
+    back_populates="post",
+    cascade="all, delete"
+)
+

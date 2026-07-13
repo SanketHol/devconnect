@@ -11,6 +11,7 @@ from app.routers import posts
 from app.models.like import Like
 from app.models.follow import Follow
 from app.routers import upload
+from app.models.notification import Notification
 
 from app.models.comment import Comment
 from app.routers.comments import router as comments_router
