@@ -8,6 +8,7 @@ from typing import List
 from app.schemas.follow import FollowUserResponse
 
 
+
 router = APIRouter(
     prefix="/follows",
     tags=["Follows"]

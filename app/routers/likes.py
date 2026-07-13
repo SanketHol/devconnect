@@ -6,6 +6,7 @@ from app.models.like import Like
 from app.models.post import Post
 from app.schemas.like import LikeRequest
 from app.utils.auth import get_current_user
+from app.repositories import notification_repository
 
 router = APIRouter(
     prefix="/likes",
@@ -60,6 +61,16 @@ def toggle_like(
 
     db.add(new_like)
     db.commit()
+
+    # Create notification (don't notify yourself)
+    if post.user_id != current_user.id:
+        notification_repository.create_notification(
+            db=db,
+            recipient_id=post.user_id,
+            sender_id=current_user.id,
+            post_id=post.id,
+            notification_type="like"
+        )
 
     return {
         "message": "Post liked"

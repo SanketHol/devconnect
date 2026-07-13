@@ -30,17 +30,17 @@ class User(Base):
     followers = relationship("Follow", foreign_keys="Follow.following_id", back_populates="following", cascade="all, delete-orphan")
 
     notifications_received = relationship(
-    "Notification",
-    foreign_keys="Notification.recipient_id",
-    back_populates="recipient",
-    cascade="all, delete"
-)
+        "Notification",
+        foreign_keys="Notification.recipient_id",
+        back_populates="recipient",
+        cascade="all, delete"
+    )
 
-notifications_sent = relationship(
-    "Notification",
-    foreign_keys="Notification.sender_id",
-    back_populates="sender",
-    cascade="all, delete"
-)
+    notifications_sent = relationship(
+        "Notification",
+        foreign_keys="Notification.sender_id",
+        back_populates="sender",
+        cascade="all, delete"
+    )
 
     

@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.models.follow import Follow
+from app.repositories import notification_repository
 
 
 def get_user(
@@ -43,6 +44,16 @@ def create_follow(
     db.add(follow)
     db.commit()
     db.refresh(follow)
+
+    # Don't notify yourself
+    if follower_id != following_id:
+        notification_repository.create_notification(
+            db=db,
+            recipient_id=following_id,
+            sender_id=follower_id,
+            post_id=None,
+            notification_type="follow"
+        )
 
     return follow
 

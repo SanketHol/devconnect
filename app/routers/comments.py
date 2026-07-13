@@ -6,6 +6,7 @@ from app.models.comment import Comment
 from app.models.post import Post
 from app.schemas.comment import CommentCreate
 from app.utils.auth import get_current_user
+from app.repositories import notification_repository
 
 router = APIRouter(
     prefix="/comments",
@@ -41,6 +42,15 @@ def create_comment(
     db.commit()
 
     db.refresh(new_comment)
+
+    if post.user_id != current_user.id:
+        notification_repository.create_notification(
+            db=db,
+            recipient_id=post.user_id,
+            sender_id=current_user.id,
+            post_id=post.id,
+            notification_type="comment"
+        )
 
     return {
         "message": "Comment added successfully",

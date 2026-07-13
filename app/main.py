@@ -32,3 +32,7 @@ app.include_router(likes_router)
 app.include_router(follows_router)
 
 app.include_router(upload.router)
+
+from app.routers import notifications
+
+app.include_router(notifications.router)
