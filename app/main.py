@@ -50,3 +50,7 @@ app.include_router(saved_posts.router)
 from app.routers import trending
 
 app.include_router(trending.router)
+
+from app.routers import suggestions
+
+app.include_router(suggestions.router)
