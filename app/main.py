@@ -41,3 +41,8 @@ app.include_router(notifications.router)
 from app.routers import feed
 
 app.include_router(feed.router)
+
+
+from app.routers import saved_posts
+
+app.include_router(saved_posts.router)
