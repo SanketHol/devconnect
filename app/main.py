@@ -16,6 +16,7 @@ from app.models.notification import Notification
 from app.models.comment import Comment
 from app.routers.comments import router as comments_router
 from app.routers.follows import router as follows_router
+from app.models.saved_post import SavedPost
 
 Base.metadata.create_all(bind=engine)
 

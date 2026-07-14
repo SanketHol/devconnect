@@ -42,5 +42,10 @@ class User(Base):
         back_populates="sender",
         cascade="all, delete"
     )
+    saved_posts = relationship(
+        "SavedPost",
+        back_populates="user",
+        cascade="all, delete"
+    )
 
     

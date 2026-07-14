@@ -30,3 +30,9 @@ class Post(Base):
         cascade="all, delete"
     )
 
+    saved_by = relationship(
+        "SavedPost",
+        back_populates="post",
+        cascade="all, delete"
+    )
+
