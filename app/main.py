@@ -36,3 +36,7 @@ app.include_router(upload.router)
 from app.routers import notifications
 
 app.include_router(notifications.router)
+
+from app.routers import feed
+
+app.include_router(feed.router)
