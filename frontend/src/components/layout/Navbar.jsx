@@ -1,3 +1,5 @@
+import { Bell, Search } from "lucide-react";
+
 function Navbar() {
     return (
         <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
@@ -8,7 +10,11 @@ function Navbar() {
                     DevConnect
                 </h1>
 
-                <div className="space-x-3">
+                <div className="flex items-center gap-4">
+
+                    <Search className="cursor-pointer hover:text-cyan-400 transition" />
+
+                    <Bell className="cursor-pointer hover:text-cyan-400 transition" />
 
                     <button className="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg">
                         Login
