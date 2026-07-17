@@ -1,12 +1,30 @@
-# Virtual Environment
+# Python
 venv/
-
-# Python Cache
 __pycache__/
 *.pyc
-
-# Environment Variables
 .env
 
-# VS Code Settings
+# Database
+*.db
+
+# VSCode
 .vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# React
+frontend/node_modules/
+frontend/dist/
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+coverage/
+
+# Build
+build/
+dist/
