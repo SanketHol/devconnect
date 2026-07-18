@@ -3,6 +3,9 @@ import {
   MessageCircle,
 } from "lucide-react";
 
+import CommentInput from "../comments/CommentInput";
+import CommentList from "../comments/CommentList";
+
 import { useLike } from "../../hooks/useLike";
 
 function PostCard({ post }) {
@@ -87,6 +90,14 @@ function PostCard({ post }) {
           <span>{post.comments_count}</span>
 
         </button>
+
+        <div className="px-5 pb-5">
+
+            <CommentInput postId={post.id} />
+
+            <CommentList postId={post.id} />
+
+        </div>
 
       </div>
 
