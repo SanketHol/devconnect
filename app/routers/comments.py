@@ -7,6 +7,8 @@ from app.models.post import Post
 from app.schemas.comment import CommentCreate
 from app.utils.auth import get_current_user
 from app.repositories import notification_repository
+from typing import List
+from app.schemas.comment import CommentResponse
 
 router = APIRouter(
     prefix="/comments",
@@ -56,4 +58,22 @@ def create_comment(
         "message": "Comment added successfully",
         "comment_id": new_comment.id
     }
+
+@router.get(
+    "/{post_id}",
+    response_model=List[CommentResponse]
+)
+def get_comments(
+    post_id: int,
+    db: Session = Depends(get_db)
+):
+
+    comments = (
+        db.query(Comment)
+        .filter(Comment.post_id == post_id)
+        .order_by(Comment.created_at.asc())
+        .all()
+    )
+
+    return comments
 

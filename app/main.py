@@ -17,10 +17,21 @@ from app.models.comment import Comment
 from app.routers.comments import router as comments_router
 from app.routers.follows import router as follows_router
 from app.models.saved_post import SavedPost
+from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(home.router)
 app.include_router(users.router)

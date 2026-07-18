@@ -13,6 +13,9 @@ class FeedPostResponse(BaseModel):
     likes_count: int
     comments_count: int
 
+    # NEW FIELD
+    is_liked: bool
+
     created_at: datetime
 
     class Config:

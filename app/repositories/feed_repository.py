@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, case, and_
 
 from app.models.post import Post
 from app.models.follow import Follow
 from app.models.like import Like
 from app.models.comment import Comment
 from app.models.user import User
+from sqlalchemy.orm import aliased
 
 
 def get_feed(
@@ -20,7 +21,7 @@ def get_feed(
         .filter(Follow.follower_id == current_user_id)
         .subquery()
     )
-
+    UserLike = aliased(Like)
     posts = (
         db.query(
             Post.id,
@@ -30,11 +31,22 @@ def get_feed(
             User.full_name.label("owner_name"),
             func.count(func.distinct(Like.id)).label("likes_count"),
             func.count(func.distinct(Comment.id)).label("comments_count"),
+            case(
+                (func.count(UserLike.id) > 0, True),
+                else_=False
+            ).label("is_liked"),
             Post.created_at,
         )
         .join(User, User.id == Post.user_id)
         .outerjoin(Like, Like.post_id == Post.id)
         .outerjoin(Comment, Comment.post_id == Post.id)
+        .outerjoin(
+            UserLike,
+            and_(
+                UserLike.post_id == Post.id,
+                UserLike.user_id == current_user_id,
+            ),
+        )
         .filter(
             (Post.user_id.in_(following_ids))
             | (Post.user_id == current_user_id)
@@ -46,6 +58,7 @@ def get_feed(
             Post.user_id,
             User.full_name,
             Post.created_at,
+            UserLike.id,
         )
         .order_by(Post.created_at.desc())
         .offset(skip)
