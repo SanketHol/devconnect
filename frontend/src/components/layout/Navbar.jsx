@@ -1,31 +1,88 @@
-import { Bell, Search } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  House,
+  Search,
+  Bell,
+  User,
+  LogOut,
+} from "lucide-react";
+
+import { useAuth } from "../../context/AuthContext";
+import Logo from "../common/Logo";
 
 function Navbar() {
-    return (
-        <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
+  const { logout } = useAuth();
 
-            <div className="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+  return (
+    <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-lg">
 
-                <h1 className="text-2xl font-bold text-cyan-400">
-                    DevConnect
-                </h1>
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
 
-                <div className="flex items-center gap-4">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-3"
+        >
+          <Logo />
+        </Link>
 
-                    <Search className="cursor-pointer hover:text-cyan-400 transition" />
+        {/* Search */}
 
-                    <Bell className="cursor-pointer hover:text-cyan-400 transition" />
+        <div className="hidden md:flex items-center w-[420px] bg-slate-900 border border-slate-800 rounded-xl px-4">
 
-                    <button className="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg">
-                        Login
-                    </button>
+          <Search
+            size={18}
+            className="text-slate-500"
+          />
 
-                </div>
+          <input
+            type="text"
+            placeholder="Search developers..."
+            className="w-full bg-transparent py-3 px-3 outline-none text-white placeholder:text-slate-500"
+          />
 
-            </div>
+        </div>
 
-        </header>
-    );
+        {/* Right Icons */}
+
+        <div className="flex items-center gap-5">
+
+          <Link to="/">
+            <House
+              size={22}
+              className="hover:text-cyan-400 transition"
+            />
+          </Link>
+
+          <button>
+            <Bell
+              size={22}
+              className="hover:text-cyan-400 transition"
+            />
+          </button>
+
+          <Link to="/profile">
+            <User
+              size={22}
+              className="hover:text-cyan-400 transition"
+            />
+          </Link>
+
+          <button
+            onClick={logout}
+          >
+            <LogOut
+              size={22}
+              className="hover:text-red-500 transition"
+            />
+          </button>
+
+        </div>
+
+      </div>
+
+    </header>
+  );
 }
 
 export default Navbar;

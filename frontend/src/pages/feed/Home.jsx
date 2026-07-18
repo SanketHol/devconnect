@@ -1,21 +1,19 @@
-import MainLayout from "../../layouts/MainLayout";
-
 function Home() {
+  return (
+    <div>
 
-    return (
+      <h1 className="text-3xl font-bold mb-6">
+        Home Feed
+      </h1>
 
-        <MainLayout>
+      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
 
-            <h1 className="text-3xl font-bold">
+        Feed will come here.
 
-                Home Feed
+      </div>
 
-            </h1>
-
-        </MainLayout>
-
-    );
-
+    </div>
+  );
 }
 
 export default Home;

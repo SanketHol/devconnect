@@ -15,6 +15,8 @@ import { useAuth } from "../../context/AuthContext";
 function Login() {
   const navigate = useNavigate();
 
+  const { login } = useAuth();
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,6 +32,12 @@ function Login() {
 
       const response = await loginUser(data);
 
+      console.log("LOGIN RESPONSE:", response.data);
+
+      if (!response.data.access_token) {
+        throw new Error("Access token not received");
+      }
+
       saveToken(response.data.access_token);
 
       login();
@@ -38,8 +46,12 @@ function Login() {
 
       navigate("/");
     } catch (err) {
+      console.error("LOGIN ERROR:", err);
+
       toast.error(
-        err.response?.data?.detail || "Login Failed"
+        err.response?.data?.detail ||
+          err.message ||
+          "Login Failed"
       );
     } finally {
       setLoading(false);
@@ -48,7 +60,6 @@ function Login() {
 
   return (
     <AuthCard title="Welcome Back">
-
       <p className="text-slate-400 text-center mb-8">
         Login to continue to DevConnect
       </p>
@@ -57,7 +68,6 @@ function Login() {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-5"
       >
-
         <Input
           label="Email"
           icon={Mail}
@@ -69,7 +79,6 @@ function Login() {
         />
 
         <div className="relative">
-
           <Input
             label="Password"
             icon={Lock}
@@ -83,9 +92,7 @@ function Login() {
 
           <button
             type="button"
-            onClick={() =>
-              setShowPassword(!showPassword)
-            }
+            onClick={() => setShowPassword(!showPassword)}
             className="absolute right-4 top-[42px] text-slate-400 hover:text-white"
           >
             {showPassword ? (
@@ -94,7 +101,6 @@ function Login() {
               <Eye size={18} />
             )}
           </button>
-
         </div>
 
         <Button
@@ -103,26 +109,19 @@ function Login() {
         >
           Login
         </Button>
-
       </form>
 
       <div className="mt-8 text-center">
-
         <p className="text-slate-400">
-
           Don't have an account?{" "}
-
           <Link
             to="/register"
             className="text-cyan-400 hover:underline"
           >
             Register
           </Link>
-
         </p>
-
       </div>
-
     </AuthCard>
   );
 }

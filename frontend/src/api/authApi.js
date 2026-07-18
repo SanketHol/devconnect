@@ -1,7 +1,20 @@
 import api from "./axios";
 
 export const loginUser = (data) => {
-    return api.post("/users/login", data);
+    const formData = new URLSearchParams();
+
+    formData.append("username", data.email);
+    formData.append("password", data.password);
+
+    return api.post(
+        "/users/login",
+        formData,
+        {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        }
+    );
 };
 
 export const registerUser = (data) => {

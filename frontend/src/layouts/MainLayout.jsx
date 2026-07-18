@@ -1,27 +1,29 @@
+import { Outlet } from "react-router-dom";
+
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 
-function MainLayout({ children }) {
-    return (
-        <div className="min-h-screen bg-slate-950 text-white">
+function MainLayout() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
 
-            <Navbar />
+      <Navbar />
 
-            <div className="max-w-7xl mx-auto flex">
+      <div className="mx-auto flex max-w-7xl">
 
-                <Sidebar />
+        <Sidebar />
 
-                <main className="flex-1 p-6">
-                    {children}
-                </main>
+        <main className="flex-1 p-6">
+          <Outlet />
+        </main>
 
-                <RightSidebar />
+        <RightSidebar />
 
-            </div>
+      </div>
 
-        </div>
-    );
+    </div>
+  );
 }
 
 export default MainLayout;

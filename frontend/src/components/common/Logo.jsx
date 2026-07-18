@@ -1,33 +1,21 @@
 import logo from "../../assets/logo.svg";
 
 function Logo() {
+  return (
+    <div className="flex items-center gap-3">
 
-    return (
+      <img
+        src={logo}
+        alt="DevConnect"
+        className="w-10 h-10"
+      />
 
-        <div className="flex items-center gap-4">
+      <span className="text-2xl font-bold text-white">
+        DevConnect
+      </span>
 
-            <img
-                src={logo}
-                alt="DevConnect"
-                className="w-14 h-14"
-            />
-
-            <div>
-
-                <h1 className="text-4xl font-extrabold tracking-tight">
-                    DevConnect
-                </h1>
-
-                <p className="text-cyan-100 text-sm">
-                    Social Network for Developers
-                </p>
-
-            </div>
-
-        </div>
-
-    );
-
+    </div>
+  );
 }
 
 export default Logo;
