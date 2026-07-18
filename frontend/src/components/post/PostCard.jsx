@@ -3,7 +3,11 @@ import {
   MessageCircle,
 } from "lucide-react";
 
+import { useLike } from "../../hooks/useLike";
+
 function PostCard({ post }) {
+  const likeMutation = useLike();
+
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
@@ -12,23 +16,17 @@ function PostCard({ post }) {
         <div className="flex items-center gap-3 mb-4">
 
           <div className="w-11 h-11 rounded-full bg-cyan-500 flex items-center justify-center font-bold">
-
             {post.owner_name.charAt(0)}
-
           </div>
 
           <div>
 
             <h3 className="font-semibold">
-
               {post.owner_name}
-
             </h3>
 
             <p className="text-sm text-slate-400">
-
               {new Date(post.created_at).toLocaleString()}
-
             </p>
 
           </div>
@@ -36,38 +34,57 @@ function PostCard({ post }) {
         </div>
 
         <p className="mb-4 whitespace-pre-wrap">
-
           {post.caption}
-
         </p>
 
       </div>
 
       {post.image_url && (
-
         <img
           src={post.image_url}
           alt=""
           className="w-full max-h-[500px] object-cover"
         />
-
       )}
 
       <div className="flex justify-around border-t border-slate-800 py-3">
 
-        <button className="flex gap-2 hover:text-cyan-400">
+        <button
+          onClick={() => likeMutation.mutate(post.id)}
+          disabled={likeMutation.isPending}
+          className="
+            flex
+            items-center
+            gap-2
+            transition
+            hover:text-red-400
+          "
+        >
+          <Heart
+            size={20}
+            className={`transition ${
+              post.is_liked
+                ? "fill-red-500 text-red-500"
+                : "text-slate-300"
+            }`}
+          />
 
-          <Heart size={20} />
-
-          {post.likes_count}
+          <span>{post.likes_count}</span>
 
         </button>
 
-        <button className="flex gap-2 hover:text-cyan-400">
-
+        <button
+          className="
+            flex
+            items-center
+            gap-2
+            hover:text-cyan-400
+            transition
+          "
+        >
           <MessageCircle size={20} />
 
-          {post.comments_count}
+          <span>{post.comments_count}</span>
 
         </button>
 
