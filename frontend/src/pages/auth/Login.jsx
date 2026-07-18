@@ -1,93 +1,130 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
+
+import AuthCard from "../../components/common/AuthCard";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
+
 import { loginUser } from "../../api/authApi";
-import toast, { Toaster } from "react-hot-toast";
+import { saveToken } from "../../lib/auth";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
+  const navigate = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-    } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const onSubmit = async (data) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-        try {
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
 
-            const response = await loginUser(data);
+      const response = await loginUser(data);
 
-            localStorage.setItem(
-                "token",
-                response.data.access_token
-            );
+      saveToken(response.data.access_token);
 
-            toast.success("Login Successful!");
+      login();
 
-            console.log(response.data);
+      toast.success("Login Successful!");
 
-        } catch (err) {
+      navigate("/");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.detail || "Login Failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            toast.error(
-                err.response?.data?.detail || "Login Failed"
-            );
+  return (
+    <AuthCard title="Welcome Back">
 
-        }
+      <p className="text-slate-400 text-center mb-8">
+        Login to continue to DevConnect
+      </p>
 
-    };
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+      >
 
-    return (
+        <Input
+          label="Email"
+          icon={Mail}
+          placeholder="Enter your email"
+          error={errors.email?.message}
+          {...register("email", {
+            required: "Email is required",
+          })}
+        />
 
-        <div className="min-h-screen flex justify-center items-center bg-slate-950">
+        <div className="relative">
 
-            <Toaster position="top-right"/>
+          <Input
+            label="Password"
+            icon={Lock}
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            error={errors.password?.message}
+            {...register("password", {
+              required: "Password is required",
+            })}
+          />
 
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="bg-slate-900 p-8 rounded-2xl w-[400px] shadow-xl border border-slate-800"
-            >
-
-                <h1 className="text-3xl font-bold text-center text-cyan-400 mb-8">
-                    DevConnect
-                </h1>
-
-                <input
-                    {...register("email")}
-                    placeholder="Email"
-                    className="w-full p-3 rounded-xl bg-slate-800 mb-4 outline-none"
-                />
-
-                <input
-                    type="password"
-                    {...register("password")}
-                    placeholder="Password"
-                    className="w-full p-3 rounded-xl bg-slate-800 mb-6 outline-none"
-                />
-
-                <button
-                    className="w-full bg-cyan-500 hover:bg-cyan-600 py-3 rounded-xl font-semibold"
-                >
-                    Login
-                </button>
-
-                <p className="mt-6 text-center text-gray-400">
-
-                    Don't have an account?
-
-                    <Link
-                        to="/register"
-                        className="text-cyan-400 ml-2"
-                    >
-                        Register
-                    </Link>
-
-                </p>
-
-            </form>
+          <button
+            type="button"
+            onClick={() =>
+              setShowPassword(!showPassword)
+            }
+            className="absolute right-4 top-[42px] text-slate-400 hover:text-white"
+          >
+            {showPassword ? (
+              <EyeOff size={18} />
+            ) : (
+              <Eye size={18} />
+            )}
+          </button>
 
         </div>
 
-    );
+        <Button
+          type="submit"
+          loading={loading}
+        >
+          Login
+        </Button>
 
+      </form>
+
+      <div className="mt-8 text-center">
+
+        <p className="text-slate-400">
+
+          Don't have an account?{" "}
+
+          <Link
+            to="/register"
+            className="text-cyan-400 hover:underline"
+          >
+            Register
+          </Link>
+
+        </p>
+
+      </div>
+
+    </AuthCard>
+  );
 }
 
 export default Login;
