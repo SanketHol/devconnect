@@ -1,16 +1,13 @@
+import CreatePost from "../../components/post/CreatePost";
+import PostList from "../../components/post/PostList";
+
 function Home() {
   return (
-    <div>
+    <div className="max-w-2xl mx-auto py-6 space-y-6">
 
-      <h1 className="text-3xl font-bold mb-6">
-        Home Feed
-      </h1>
+      <CreatePost />
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-        Feed will come here.
-
-      </div>
+      <PostList />
 
     </div>
   );

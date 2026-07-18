@@ -32,7 +32,7 @@ function Login() {
 
       const response = await loginUser(data);
 
-      console.log("LOGIN RESPONSE:", response.data);
+    //   console.log("LOGIN RESPONSE:", response.data);
 
       if (!response.data.access_token) {
         throw new Error("Access token not received");
@@ -46,7 +46,7 @@ function Login() {
 
       navigate("/");
     } catch (err) {
-      console.error("LOGIN ERROR:", err);
+    //   console.error("LOGIN ERROR:", err);
 
       toast.error(
         err.response?.data?.detail ||
