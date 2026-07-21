@@ -1,6 +1,9 @@
+import { useState } from "react";
 import {
   Heart,
   MessageCircle,
+  Bookmark,
+  Share2,
 } from "lucide-react";
 
 import CommentInput from "../comments/CommentInput";
@@ -11,24 +14,57 @@ import { useLike } from "../../hooks/useLike";
 function PostCard({ post }) {
   const likeMutation = useLike();
 
+  const [showComments, setShowComments] = useState(false);
+
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+    <article
+      className="
+      bg-slate-900/90
+      backdrop-blur
+      border
+      border-slate-800
+      rounded-3xl
+      overflow-hidden
+      shadow-xl
+      transition-all
+      duration-300
+      hover:border-cyan-500/40
+      hover:shadow-cyan-500/10
+      "
+    >
+      {/* HEADER */}
 
-      <div className="p-5">
+      <div className="flex items-center justify-between p-6">
 
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-4">
 
-          <div className="w-11 h-11 rounded-full bg-cyan-500 flex items-center justify-center font-bold">
-            {post.owner_name.charAt(0)}
+          <div
+            className="
+            w-12
+            h-12
+            rounded-full
+            bg-gradient-to-br
+            from-cyan-400
+            to-blue-600
+            flex
+            items-center
+            justify-center
+            text-white
+            font-bold
+            text-lg
+            shadow-lg
+            "
+          >
+            {post.owner_name.charAt(0).toUpperCase()}
           </div>
 
           <div>
 
-            <h3 className="font-semibold">
+            <h3 className="font-semibold text-white tracking-tight">
               {post.owner_name}
             </h3>
 
-            <p className="text-sm text-slate-400">
+            <p className="text-xs text-slate-400 mt-0.5">
               {new Date(post.created_at).toLocaleString()}
             </p>
 
@@ -36,72 +72,159 @@ function PostCard({ post }) {
 
         </div>
 
-        <p className="mb-4 whitespace-pre-wrap">
+      </div>
+
+      {/* CAPTION */}
+
+      <div className="px-6 pb-5">
+
+        <p
+          className="
+          text-slate-200
+          whitespace-pre-wrap
+          leading-7
+          "
+        >
           {post.caption}
         </p>
 
       </div>
 
+      {/* IMAGE */}
+
       {post.image_url && (
-        <img
-          src={post.image_url}
-          alt=""
-          className="w-full max-h-[500px] object-cover"
-        />
-      )}
 
-      <div className="flex justify-around border-t border-slate-800 py-3">
+        <div className="overflow-hidden">
 
-        <button
-          onClick={() => likeMutation.mutate(post.id)}
-          disabled={likeMutation.isPending}
-          className="
-            flex
-            items-center
-            gap-2
-            transition
-            hover:text-red-400
-          "
-        >
-          <Heart
-            size={20}
-            className={`transition ${
-              post.is_liked
-                ? "fill-red-500 text-red-500"
-                : "text-slate-300"
-            }`}
+          <img
+            src={post.image_url}
+            alt=""
+            className="
+            w-full
+            max-h-[550px]
+            object-cover
+            transition-transform
+            duration-500
+            hover:scale-[1.03]
+            "
           />
 
-          <span>{post.likes_count}</span>
+        </div>
 
-        </button>
+      )}
 
-        <button
-          className="
+      {/* ACTION BAR */}
+
+      <div
+        className="
+        flex
+        items-center
+        justify-between
+        px-6
+        py-4
+        border-t
+        border-slate-800
+        "
+      >
+        <div className="flex items-center gap-6">
+
+          <button
+            disabled={likeMutation.isPending}
+            onClick={() => likeMutation.mutate(post.id)}
+            className="
             flex
             items-center
             gap-2
+            text-slate-300
+            hover:text-red-400
+            transition
+            "
+          >
+            <Heart
+              size={21}
+              className={`transition ${
+                post.is_liked
+                  ? "fill-red-500 text-red-500"
+                  : ""
+              }`}
+            />
+
+            <span className="text-sm font-medium">
+              {post.likes_count}
+            </span>
+
+          </button>
+
+          <button
+            onClick={() =>
+              setShowComments(!showComments)
+            }
+            className="
+            flex
+            items-center
+            gap-2
+            text-slate-300
             hover:text-cyan-400
             transition
-          "
-        >
-          <MessageCircle size={20} />
+            "
+          >
+            <MessageCircle size={21} />
 
-          <span>{post.comments_count}</span>
+            <span className="text-sm font-medium">
+              {post.comments_count}
+            </span>
 
-        </button>
+          </button>
 
-        <div className="px-5 pb-5">
+        </div>
 
-            <CommentInput postId={post.id} />
+        <div className="flex items-center gap-4">
 
-            <CommentList postId={post.id} />
+          <button
+            className="
+            text-slate-400
+            hover:text-white
+            transition
+            "
+          >
+            <Bookmark size={20} />
+          </button>
+
+          <button
+            className="
+            text-slate-400
+            hover:text-white
+            transition
+            "
+          >
+            <Share2 size={20} />
+          </button>
 
         </div>
 
       </div>
 
-    </div>
+      {/* COMMENTS */}
+
+      {showComments && (
+
+        <div
+          className="
+          px-6
+          pb-6
+          border-t
+          border-slate-800
+          "
+        >
+          <CommentInput postId={post.id} />
+
+          <CommentList postId={post.id} />
+
+        </div>
+
+      )}
+
+    </article>
   );
 }
 

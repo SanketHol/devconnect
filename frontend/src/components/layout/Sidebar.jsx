@@ -7,10 +7,12 @@ import {
   Users,
   Bell,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { useAuth } from "../../context/AuthContext";
 
 const menuItems = [
   {
@@ -56,15 +58,84 @@ const menuItems = [
 ];
 
 function Sidebar() {
-    const { data: user, isLoading } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
+  const { logout } = useAuth();
+
   return (
-    <aside className="hidden lg:flex flex-col justify-between w-64 min-h-[calc(100vh-64px)] border-r border-slate-800 p-6">
-
+    <aside
+      className="
+      hidden
+      lg:flex
+      flex-col
+      justify-between
+      w-72
+      sticky
+      top-16
+      h-[calc(100vh-64px)]
+      border-r
+      border-slate-800
+      px-6
+      py-8
+      bg-slate-950/70
+      backdrop-blur
+      "
+    >
       <div>
+        {/* USER */}
 
-        <h2 className="text-lg font-semibold mb-8 text-slate-300">
-          Navigation
-        </h2>
+        <div
+          className="
+          mb-8
+          rounded-2xl
+          bg-slate-900
+          border
+          border-slate-800
+          p-4
+          "
+        >
+          {isLoading ? (
+            <p className="text-slate-500">
+              Loading...
+            </p>
+          ) : (
+            <div className="flex items-center gap-4">
+
+              <div
+                className="
+                w-14
+                h-14
+                rounded-full
+                bg-gradient-to-br
+                from-cyan-400
+                to-blue-600
+                flex
+                items-center
+                justify-center
+                font-bold
+                text-xl
+                shadow-lg
+                "
+              >
+                {user?.full_name?.charAt(0)}
+              </div>
+
+              <div>
+
+                <h2 className="font-semibold">
+                  {user?.full_name}
+                </h2>
+
+                <p className="text-sm text-slate-400 truncate w-36">
+                  {user?.email}
+                </p>
+
+              </div>
+
+            </div>
+          )}
+        </div>
+
+        {/* MENU */}
 
         <nav className="space-y-2">
 
@@ -76,17 +147,28 @@ function Sidebar() {
                 key={item.title}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
+                  `
+                  flex
+                  items-center
+                  gap-4
+                  px-4
+                  py-3
+                  rounded-2xl
+                  transition-all
+                  duration-300
                   ${
                     isActive
-                      ? "bg-cyan-500 text-white"
-                      : "hover:bg-slate-900 text-slate-300 hover:text-white"
-                  }`
+                      ? "bg-cyan-500 text-white shadow-lg"
+                      : "text-slate-300 hover:bg-slate-900 hover:text-white"
+                  }
+                  `
                 }
               >
                 <Icon size={20} />
 
-                <span>{item.title}</span>
+                <span className="font-medium">
+                  {item.title}
+                </span>
 
               </NavLink>
             );
@@ -96,41 +178,27 @@ function Sidebar() {
 
       </div>
 
-      <div className="border-t border-slate-800 pt-5">
+      {/* LOGOUT */}
 
-  {isLoading ? (
+      <button
+        onClick={logout}
+        className="
+        flex
+        items-center
+        gap-3
+        px-4
+        py-3
+        rounded-2xl
+        text-red-400
+        hover:bg-red-500/10
+        transition
+        "
+      >
+        <LogOut size={20} />
 
-    <p className="text-slate-500">
-      Loading...
-    </p>
+        Logout
 
-  ) : (
-
-    <div className="flex items-center gap-3">
-
-      <div className="w-11 h-11 rounded-full bg-cyan-500 flex items-center justify-center font-bold text-lg">
-
-        {user?.full_name?.charAt(0)}
-
-      </div>
-
-      <div>
-
-        <h3 className="font-semibold">
-          {user?.full_name}
-        </h3>
-
-        <p className="text-sm text-slate-400">
-          {user?.email}
-        </p>
-
-      </div>
-
-    </div>
-
-  )}
-
-</div>
+      </button>
 
     </aside>
   );

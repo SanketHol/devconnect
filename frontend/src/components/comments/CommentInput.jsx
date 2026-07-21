@@ -1,65 +1,76 @@
 import { useState } from "react";
-import Button from "../ui/Button";
+import { SendHorizontal } from "lucide-react";
+
 import { useCreateComment } from "../../hooks/useCreateComment";
 
 function CommentInput({ postId }) {
+  const [text, setText] = useState("");
 
-    const [text, setText] = useState("");
+  const mutation = useCreateComment(postId);
 
-    const mutation = useCreateComment(postId);
+  const submit = () => {
+    if (!text.trim()) return;
 
-    const submit = () => {
+    mutation.mutate({
+      postId,
+      text,
+    });
 
-        if (!text.trim()) return;
+    setText("");
+  };
 
-        mutation.mutate({
+  return (
+    <div className="mt-6">
 
-            postId,
+      <div
+        className="
+        flex
+        items-center
+        gap-3
+        bg-slate-800
+        border
+        border-slate-700
+        rounded-full
+        px-4
+        py-2
+        "
+      >
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Add a comment..."
+          className="
+          flex-1
+          bg-transparent
+          outline-none
+          text-sm
+          placeholder:text-slate-500
+          "
+        />
 
-            text,
+        <button
+          onClick={submit}
+          disabled={mutation.isPending}
+          className="
+          w-9
+          h-9
+          rounded-full
+          bg-cyan-500
+          hover:bg-cyan-600
+          flex
+          items-center
+          justify-center
+          transition
+          disabled:opacity-50
+          "
+        >
+          <SendHorizontal size={18} />
+        </button>
 
-        });
+      </div>
 
-        setText("");
-
-    };
-
-    return (
-
-        <div className="mt-4">
-
-            <textarea
-
-                value={text}
-
-                onChange={(e) => setText(e.target.value)}
-
-                placeholder="Write a comment..."
-
-                className="w-full bg-slate-800 rounded-xl p-3 resize-none"
-
-            />
-
-            <div className="mt-2">
-
-                <Button
-
-                    onClick={submit}
-
-                    loading={mutation.isPending}
-
-                >
-
-                    Comment
-
-                </Button>
-
-            </div>
-
-        </div>
-
-    );
-
+    </div>
+  );
 }
 
 export default CommentInput;
