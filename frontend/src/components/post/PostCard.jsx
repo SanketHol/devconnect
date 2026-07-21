@@ -16,6 +16,15 @@ function PostCard({ post }) {
 
   const [showComments, setShowComments] = useState(false);
 
+  // Supports both Feed API and Profile API
+  const ownerName = post.owner_name || post.user?.full_name || "Unknown User";
+  const avatarLetter = ownerName.charAt(0).toUpperCase();
+
+  const likesCount = post.likes_count ?? 0;
+  const commentsCount =
+    post.comments_count ?? post.comments?.length ?? 0;
+  const isLiked = post.is_liked ?? false;
+
   return (
     <article
       className="
@@ -55,13 +64,13 @@ function PostCard({ post }) {
             shadow-lg
             "
           >
-            {post.owner_name.charAt(0).toUpperCase()}
+            {avatarLetter}
           </div>
 
           <div>
 
             <h3 className="font-semibold text-white tracking-tight">
-              {post.owner_name}
+              {ownerName}
             </h3>
 
             <p className="text-xs text-slate-400 mt-0.5">
@@ -143,14 +152,14 @@ function PostCard({ post }) {
             <Heart
               size={21}
               className={`transition ${
-                post.is_liked
+                isLiked
                   ? "fill-red-500 text-red-500"
                   : ""
               }`}
             />
 
             <span className="text-sm font-medium">
-              {post.likes_count}
+              {likesCount}
             </span>
 
           </button>
@@ -171,7 +180,7 @@ function PostCard({ post }) {
             <MessageCircle size={21} />
 
             <span className="text-sm font-medium">
-              {post.comments_count}
+              {commentsCount}
             </span>
 
           </button>
