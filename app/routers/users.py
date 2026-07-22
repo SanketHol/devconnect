@@ -1,21 +1,32 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 
 from app.database import get_db
+
 from app.models.user import User
+from app.models.post import Post
+from app.models.comment import Comment
+from app.models.follow import Follow
+
 from app.schemas.user import UserRegister
-from app.utils.security import hash_password, verify_password
-from app.utils.jwt import create_access_token
-from app.utils.auth import get_current_user
 from app.schemas.profile import (
     ProfileResponse,
     ProfileUpdate
 )
-from app.models.post import Post
-from fastapi import HTTPException
+from app.schemas.post import PostResponse
+
+from app.utils.security import (
+    hash_password,
+    verify_password
+)
+from app.utils.jwt import create_access_token
+from app.utils.auth import get_current_user
+
 from app.repositories import user_repository
-from typing import List
+
 
 router = APIRouter(
     prefix="/users",
@@ -24,7 +35,10 @@ router = APIRouter(
 
 
 @router.post("/register")
-def register(user: UserRegister, db: Session = Depends(get_db)):
+def register(
+    user: UserRegister,
+    db: Session = Depends(get_db)
+):
 
     new_user = User(
         full_name=user.full_name,
@@ -33,16 +47,13 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
     )
 
     db.add(new_user)
-
     db.commit()
-
     db.refresh(new_user)
 
     return {
         "message": "User Registered Successfully",
         "user_id": new_user.id
     }
-
 
 
 @router.post("/login")
@@ -72,7 +83,7 @@ def login(
 
     access_token = create_access_token(
         data={
-        "sub": str(db_user.id)
+            "sub": str(db_user.id)
         }
     )
 
@@ -84,7 +95,7 @@ def login(
 
 @router.get("/me")
 def get_me(
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
 
     return {
@@ -112,6 +123,7 @@ def search_users(
 )
 def get_profile(
     user_id: int,
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
 
@@ -133,13 +145,38 @@ def get_profile(
         .count()
     )
 
+    followers_count = (
+        db.query(Follow)
+        .filter(Follow.following_id == user.id)
+        .count()
+    )
+
+    following_count = (
+        db.query(Follow)
+        .filter(Follow.follower_id == user.id)
+        .count()
+    )
+
+    is_following = (
+        db.query(Follow)
+        .filter(
+            Follow.follower_id == current_user.id,
+            Follow.following_id == user.id
+        )
+        .first()
+        is not None
+    )
+
     return {
         "id": user.id,
         "full_name": user.full_name,
         "email": user.email,
         "bio": user.bio,
         "profile_picture": user.profile_picture,
-        "posts_count": posts_count
+        "posts_count": posts_count,
+        "followers_count": followers_count,
+        "following_count": following_count,
+        "is_following": is_following
     }
 
 
@@ -150,7 +187,9 @@ def update_profile(
     db: Session = Depends(get_db)
 ):
 
-    update_data = profile.model_dump(exclude_unset=True)
+    update_data = profile.model_dump(
+        exclude_unset=True
+    )
 
     for key, value in update_data.items():
         setattr(current_user, key, value)
@@ -161,3 +200,26 @@ def update_profile(
     return {
         "message": "Profile updated successfully"
     }
+
+
+@router.get(
+    "/{user_id}/posts",
+    response_model=list[PostResponse]
+)
+def get_user_posts(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+
+    posts = (
+        db.query(Post)
+        .options(
+            joinedload(Post.user),
+            joinedload(Post.comments).joinedload(Comment.user)
+        )
+        .filter(Post.user_id == user_id)
+        .order_by(Post.created_at.desc())
+        .all()
+    )
+
+    return posts

@@ -1,6 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
 import {
-  Search,
   Bell,
   User,
   LogOut,
@@ -10,6 +9,7 @@ import {
 
 import { useAuth } from "../../context/AuthContext";
 import Logo from "../common/Logo";
+import SearchBar from "../search/SearchBar";
 
 function Navbar() {
   const { logout } = useAuth();
@@ -52,35 +52,8 @@ function Navbar() {
 
         {/* Search */}
 
-        <div
-          className="
-          hidden
-          lg:flex
-          items-center
-          gap-3
-          w-[430px]
-          px-4
-          py-2.5
-          rounded-2xl
-          bg-slate-900
-          border
-          border-slate-800
-          "
-        >
-          <Search
-            size={18}
-            className="text-slate-500"
-          />
-
-          <input
-            placeholder="Search developers..."
-            className="
-            flex-1
-            bg-transparent
-            outline-none
-            placeholder:text-slate-500
-            "
-          />
+        <div className="hidden lg:block">
+          <SearchBar />
         </div>
 
         {/* Right */}

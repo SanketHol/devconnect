@@ -51,6 +51,15 @@ function AppRouter() {
           }
         />
 
+        <Route
+          path="/profile/:id"
+          element={
+              <ProtectedRoute>
+                  <Profile />
+              </ProtectedRoute>
+          }
+       />
+
       </Route>
 
     </Routes>

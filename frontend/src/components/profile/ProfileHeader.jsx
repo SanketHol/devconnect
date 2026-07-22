@@ -1,8 +1,13 @@
-function ProfileHeader({ profile }) {
-  return (
-    <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
+import FollowButton from "./FollowButton";
 
-      {/* Cover */}
+function ProfileHeader({
+  profile,
+  isOwnProfile,
+}) {
+
+  return (
+
+    <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
 
       <div className="h-56 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600" />
 
@@ -48,25 +53,36 @@ function ProfileHeader({ profile }) {
 
           </div>
 
-          <button
-            className="
-            px-6
-            py-3
-            rounded-xl
-            bg-cyan-500
-            hover:bg-cyan-600
-            font-semibold
-            transition
-            "
-          >
-            Edit Profile
-          </button>
+          {isOwnProfile ? (
+
+            <button
+              className="
+              px-6
+              py-3
+              rounded-xl
+              bg-cyan-500
+              hover:bg-cyan-600
+              font-semibold
+              transition
+              "
+            >
+              Edit Profile
+            </button>
+
+          ) : (
+
+            <FollowButton
+              profile={profile}
+            />
+
+          )}
 
         </div>
 
       </div>
 
     </div>
+
   );
 }
 
