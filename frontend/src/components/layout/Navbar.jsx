@@ -11,8 +11,11 @@ import { useAuth } from "../../context/AuthContext";
 import Logo from "../common/Logo";
 import SearchBar from "../search/SearchBar";
 
+import { useNotifications } from "../../hooks/useNotifications";
+
 function Navbar() {
   const { logout } = useAuth();
+  const { unreadCount } = useNotifications();
 
   return (
     <header
@@ -79,8 +82,9 @@ function Navbar() {
             <Home size={20} />
           </NavLink>
 
-          <button
-            className="
+          <NavLink
+          to="/notifications"
+          className="
             relative
             w-11
             h-11
@@ -93,22 +97,37 @@ function Navbar() {
             justify-center
             hover:bg-cyan-500
             transition
-            "
-          >
-            <Bell size={20} />
-
+          "
+        >
+          <Bell size={20} />
+        
+          {unreadCount > 0 && (
             <span
               className="
-              absolute
-              top-2
-              right-2
-              w-2
-              h-2
-              rounded-full
-              bg-red-500
+                absolute
+                -top-1
+                -right-1
+                min-w-5
+                h-5
+                px-1
+                rounded-full
+                bg-red-500
+                text-white
+                text-[10px]
+                font-bold
+                flex
+                items-center
+                justify-center
+                border-2
+                border-slate-950
               "
-            />
-          </button>
+            >
+              {unreadCount > 9
+                ? "9+"
+                : unreadCount}
+            </span>
+          )}
+          </NavLink>
 
           <NavLink
             to="/profile"

@@ -11,6 +11,8 @@ import Register from "../pages/auth/Register";
 
 import ProtectedRoute from "./ProtectedRoute";
 
+import Notifications from "../pages/notifications/Notifications";
+
 function AppRouter() {
   return (
     <Routes>
@@ -61,6 +63,15 @@ function AppRouter() {
        />
 
       </Route>
+
+      <Route
+         path="/notifications"
+         element={
+           <ProtectedRoute>
+              <Notifications />
+           </ProtectedRoute>
+         }
+        />
 
     </Routes>
   );
