@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.models.notification import Notification
 
@@ -32,9 +32,31 @@ def get_notifications(
 
     return (
         db.query(Notification)
-        .filter(Notification.recipient_id == user_id)
-        .order_by(Notification.created_at.desc())
+        .options(
+            joinedload(Notification.sender)
+        )
+        .filter(
+            Notification.recipient_id == user_id
+        )
+        .order_by(
+            Notification.created_at.desc()
+        )
         .all()
+    )
+
+
+def get_unread_count(
+    db: Session,
+    user_id: int
+):
+
+    return (
+        db.query(Notification)
+        .filter(
+            Notification.recipient_id == user_id,
+            Notification.is_read == False
+        )
+        .count()
     )
 
 
@@ -46,6 +68,9 @@ def mark_as_read(
 
     notification = (
         db.query(Notification)
+        .options(
+            joinedload(Notification.sender)
+        )
         .filter(
             Notification.id == notification_id,
             Notification.recipient_id == user_id

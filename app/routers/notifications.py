@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -6,6 +6,7 @@ from app.database import get_db
 from app.schemas.notification import NotificationResponse
 from app.repositories import notification_repository
 from app.utils.auth import get_current_user
+
 
 router = APIRouter(
     prefix="/notifications",
@@ -21,14 +22,25 @@ def get_notifications(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     return notification_repository.get_notifications(
         db=db,
         user_id=current_user.id
     )
 
 
-from fastapi import HTTPException
+@router.get("/unread-count")
+def get_unread_count(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    count = notification_repository.get_unread_count(
+        db=db,
+        user_id=current_user.id
+    )
+
+    return {
+        "count": count
+    }
 
 
 @router.put(
@@ -40,7 +52,6 @@ def mark_notification_read(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     notification = notification_repository.mark_as_read(
         db=db,
         notification_id=notification_id,
@@ -62,7 +73,6 @@ def delete_notification(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     deleted = notification_repository.delete_notification(
         db=db,
         notification_id=notification_id,
